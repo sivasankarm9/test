@@ -13,7 +13,7 @@
 	<artifactId>student-management-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>student-management-system</name>
-	<description>Student Management System Spring boot Project
+	<description>Student Management System Spring boot Project-test
 	</description>
 	<properties>
 		<java.version>1.8</java.version>
