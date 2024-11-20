@@ -31,7 +31,7 @@ public class EmployeeDto {
     //@Email(message = EMPLOYEE_EMAIL_FORMAT_VALIDATION_MESSAGE)
     @CompanyEmail(message = EMPLOYEE_COMPANY_EMAIL_FORMAT_VALIDATION_MESSAGE)
     //@UniqueEmail(message = EMPLOYEE_COMPANY_EMAIL_UNIQUE_VALIDATION_MESSAGE)
-    @Length(min = 15, max = 20)
+    //@Length(min = 15, max = 20)
     private String email;
 
     @NotNull

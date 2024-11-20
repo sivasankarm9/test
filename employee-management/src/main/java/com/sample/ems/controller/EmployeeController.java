@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("emp")
 @Tag(name = "Employees API")
+@CrossOrigin("*")
 public class EmployeeController {
 
     @Autowired
@@ -49,16 +50,25 @@ public class EmployeeController {
         return new ResponseDto<>(HttpStatus.OK.value(), projects);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/employees")
     public ResponseDto<List<EmployeeDto>> createEmployees(@RequestBody @Valid List<EmployeeDto> employeeDtos) {
         List<EmployeeDto> employees = employeeService.createEmployees(employeeDtos);
-        if(employees.stream().anyMatch(emp -> emp.getProjects().stream().anyMatch(project -> project.getStatus().equalsIgnoreCase("Completed"))) || employees.stream().anyMatch(e ->e.getAddress().getPinCode().equals("560001"))){
-
-        }else {
-
-        }
         return new ResponseDto<>(HttpStatus.CREATED.value(), employees);
     }
 
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/employees/{id}")
+    public ResponseDto<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable("id") int employeeId){
+        EmployeeDto employee = employeeService.updateEmployee(employeeDto, employeeId);
+        return new ResponseDto<>(HttpStatus.OK.value(), employee);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/employees/{id}")
+    public ResponseDto<EmployeeDto> deleteEmployee(@PathVariable("id") int employeeId){
+        employeeService.deleteEmployee(employeeId);
+        return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), null);
+    }
 
 }

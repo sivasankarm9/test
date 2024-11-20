@@ -15,4 +15,8 @@ public class Constants {
     public static final String EMPLOYEE_NOT_FOUND_ERROR_DESCRIPTION_MESSAGE = "Employee Not Found";
     public static final String VALIDATION_ERROR_DESCRIPTION = "Validation Failed";
     public static final String INTERNAL_SERVER_EXCEPTION_ERROR_DESCRIPTION = "Exception occurred while processing request";
+
+    //Pagination
+    public static final  int PAGE_DEFAULT_SIZE = 5;
+    public static final  int PAGE_DEFAULT_NUMBER = 0;
 }
