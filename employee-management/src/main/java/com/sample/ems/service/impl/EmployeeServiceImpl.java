@@ -5,16 +5,24 @@ import com.sample.ems.dto.AddressDto;
 import com.sample.ems.dto.EmployeeDto;
 import com.sample.ems.dto.PageResponseDto;
 import com.sample.ems.dto.ProjectDto;
+import com.sample.ems.entity.Address;
+import com.sample.ems.entity.Department;
 import com.sample.ems.entity.Employee;
 import com.sample.ems.entity.Project;
 import com.sample.ems.exceptions.EmployeeNotFoundException;
 import com.sample.ems.repository.EmployeeRepository;
 import com.sample.ems.service.EmployeeService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +31,9 @@ import static com.sample.ems.constants.Constants.EMPLOYEE_NOT_FOUND_ERROR_DESCRI
 @Primary
 @Service("empService")
 public class EmployeeServiceImpl implements EmployeeService {
+
+    @Autowired
+    EntityManager entityManager;
 
     private final EmployeeRepository employeeRepository;
 
@@ -186,7 +197,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
-    @Override
+    /*@Override
     public PageResponseDto getEmployeesByCriteria(Pageable pageable, String name, String departmentName, String projectName, Long pinCode) {
         Page<Employee> employees = employeeRepository.findAllByCriteria(pageable, name, departmentName, projectName, pinCode);
         List<EmployeeDto> employeeDtos = employees.get().toList().stream().map(emp ->
@@ -199,6 +210,62 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .pageNumber(pageable.getPageNumber())
                 .employees(employeeDtos)
                 .numberOfPages(employees.getTotalPages())
+                .build();
+    }*/
+
+    @Override
+    public PageResponseDto getEmployeesByCriteria(Pageable pageable, String name, String departmentName, String projectName, Long pinCode) {
+
+        CriteriaBuilder criteriaBuilder =  entityManager.getCriteriaBuilder();
+        CriteriaQuery<Employee> empQuery = criteriaBuilder.createQuery(Employee.class);
+        Root<Employee> emp = empQuery.from(Employee.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if(!StringUtils.isBlank(name)){
+            predicates.add(criteriaBuilder.equal(emp.get("name"),name));
+        }
+
+       if(!StringUtils.isBlank(departmentName)){
+            Path<String> department = emp.get("department").get("name");
+           predicates.add(criteriaBuilder.equal(department, departmentName));
+        }
+
+        /*if(!StringUtils.isBlank(projectName)){
+            Predicate projNamePredicate = criteriaBuilder.equal(emp.get("projects.name"),projectName);
+            empQuery.where(projNamePredicate);
+        }
+
+         */
+        if(pinCode != null){
+            Path<String> pinCodeNo = emp.get("address").get("pinCode");
+            predicates.add(criteriaBuilder.equal(pinCodeNo,pinCode));
+        }
+
+        empQuery.select(emp).where(criteriaBuilder.or(predicates.toArray(new Predicate[0])));
+
+        List<Employee> employeeList =  entityManager.createQuery(empQuery).getResultList();
+        TypedQuery typedQuery = entityManager.createQuery(empQuery);
+        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        typedQuery.setMaxResults(pageable.getPageSize());
+
+
+        List<Employee> employees = typedQuery.getResultList();
+
+        List<EmployeeDto> employeeDtos = employees.stream().map(emp1 ->
+                objectMapper.convertValue(emp1, EmployeeDto.class)
+        ).toList();
+
+
+        double d = (double) employeeList.size()/pageable.getPageSize();
+        int noOfPages = (int)Math.ceil(d);
+
+        return PageResponseDto.builder()
+                .total((long)employeeList.size())
+                .size(pageable.getPageSize())
+                .pageNumber(pageable.getPageNumber())
+                .employees(employeeDtos)
+                .numberOfPages(noOfPages)
                 .build();
     }
 
