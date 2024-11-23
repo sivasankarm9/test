@@ -15,6 +15,7 @@ import com.sample.ems.service.EmployeeService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -28,6 +29,7 @@ import java.util.Optional;
 
 import static com.sample.ems.constants.Constants.EMPLOYEE_NOT_FOUND_ERROR_DESCRIPTION_MESSAGE;
 
+@Log4j2
 @Primary
 @Service("empService")
 public class EmployeeServiceImpl implements EmployeeService {
@@ -227,7 +229,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
        if(!StringUtils.isBlank(departmentName)){
-            Path<String> department = emp.get("department").get("name");
+           Path<String> department = emp.get("department").get("name");
            predicates.add(criteriaBuilder.equal(department, departmentName));
         }
 
