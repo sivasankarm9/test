@@ -1,3 +1,4 @@
+/*
 package com.sample.ems.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class BasicInMemorySecurityConfig {
     //In memory db
-    /*@Bean
+    */
+/*@Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
         UserDetails user = User.withUsername("siva")
                 .password(passwordEncoder.encode("pwd"))
@@ -33,7 +35,8 @@ public class BasicInMemorySecurityConfig {
                 .password(passwordEncoder.encode("pwd"))
                 .build();
         return new InMemoryUserDetailsManager(user, admin);
-    }*/
+    }*//*
+
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -64,3 +67,4 @@ public class BasicInMemorySecurityConfig {
     }
 }
 
+*/
